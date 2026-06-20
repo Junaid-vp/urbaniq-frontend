@@ -1,8 +1,48 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import Link from "next/link"
+import api from "@/lib/api"
+import { useAuthStore } from "@/store/authStore"
+
+interface Property {
+  _id: string;
+  title: string;
+  location: { city: string; state: string };
+  price: number;
+  status: string;
+}
 
 export default function OwnerDashboard() {
+  const { user } = useAuthStore()
+  const [properties, setProperties] = useState<Property[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      if (!user?._id) return
+      try {
+        const res = await api.get(`/properties?ownerId=${user._id}`)
+        setProperties(res.data)
+      } catch (error) {
+        console.error("Failed to fetch properties:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchProperties()
+  }, [user])
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price)
+  }
+
+  const activeCount = properties.filter(p => p.status === 'Available').length
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -10,8 +50,10 @@ export default function OwnerDashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Owner Dashboard</h1>
           <p className="text-muted-foreground">Manage your properties and track performance.</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" /> List New Property
+        <Button asChild>
+          <Link href="/dashboard/owner/properties/new">
+            <Plus className="h-4 w-4 mr-2" /> List New Property
+          </Link>
         </Button>
       </div>
 
@@ -21,7 +63,7 @@ export default function OwnerDashboard() {
             <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4</div>
+            <div className="text-2xl font-bold">{loading ? "..." : properties.length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -29,7 +71,7 @@ export default function OwnerDashboard() {
             <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">{loading ? "..." : activeCount}</div>
           </CardContent>
         </Card>
         <Card>
@@ -37,7 +79,7 @@ export default function OwnerDashboard() {
             <CardTitle className="text-sm font-medium">Total Inquiries</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">42</div>
+            <div className="text-2xl font-bold text-muted-foreground">Coming Soon</div>
           </CardContent>
         </Card>
         <Card>
@@ -45,7 +87,7 @@ export default function OwnerDashboard() {
             <CardTitle className="text-sm font-medium">Upcoming Visits</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-2xl font-bold text-muted-foreground">Coming Soon</div>
           </CardContent>
         </Card>
       </div>
@@ -67,24 +109,31 @@ export default function OwnerDashboard() {
                  </tr>
                </thead>
                <tbody>
-                 <tr className="border-b last:border-0">
-                   <td className="px-4 py-3 font-medium">Glass Pavilion Estate</td>
-                   <td className="px-4 py-3 text-muted-foreground">Beverly Hills, CA</td>
-                   <td className="px-4 py-3 font-medium">$8,450,000</td>
-                   <td className="px-4 py-3"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Active</span></td>
-                   <td className="px-4 py-3">
-                     <Button variant="ghost" size="sm">Edit</Button>
-                   </td>
-                 </tr>
-                 <tr className="border-b last:border-0">
-                   <td className="px-4 py-3 font-medium">Azure Heights</td>
-                   <td className="px-4 py-3 text-muted-foreground">Dubai, UAE</td>
-                   <td className="px-4 py-3 font-medium">$4,200,000</td>
-                   <td className="px-4 py-3"><span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">Pending</span></td>
-                   <td className="px-4 py-3">
-                     <Button variant="ghost" size="sm">Edit</Button>
-                   </td>
-                 </tr>
+                 {loading ? (
+                   <tr>
+                     <td colSpan={5} className="text-center py-8 text-muted-foreground">Loading properties...</td>
+                   </tr>
+                 ) : properties.length === 0 ? (
+                   <tr>
+                     <td colSpan={5} className="text-center py-8 text-muted-foreground">You have no properties listed yet.</td>
+                   </tr>
+                 ) : (
+                   properties.map(property => (
+                     <tr key={property._id} className="border-b last:border-0">
+                       <td className="px-4 py-3 font-medium">{property.title}</td>
+                       <td className="px-4 py-3 text-muted-foreground">{property.location.city}, {property.location.state}</td>
+                       <td className="px-4 py-3 font-medium">{formatPrice(property.price)}</td>
+                       <td className="px-4 py-3">
+                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${property.status === 'Available' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                           {property.status}
+                         </span>
+                       </td>
+                       <td className="px-4 py-3">
+                         <Button variant="ghost" size="sm">Edit</Button>
+                       </td>
+                     </tr>
+                   ))
+                 )}
                </tbody>
              </table>
            </div>
