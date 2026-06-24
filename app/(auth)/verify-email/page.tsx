@@ -11,7 +11,7 @@ import Link from "next/link"
 function VerifyEmailForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user, setIsVerified } = useAuthStore()
+  const { user, setAuth } = useAuthStore()
 
   // Get email from query param, fallback to store user email
   const emailParam = searchParams.get("email") || ""
@@ -90,12 +90,13 @@ function VerifyEmailForm() {
 
     setLoading(true)
     try {
-      await api.post("/auth/verify-otp", { email, otp: otpCode })
-      setIsVerified(true)
+      const response = await api.post("/auth/verify-otp", { email, otp: otpCode })
+      const { token, refreshToken, ...verifiedUser } = response.data
+      setAuth(verifiedUser, token, refreshToken)
       setSuccess("Email verified successfully! Redirecting...")
       
       setTimeout(() => {
-        const dashboardRole = user?.role.toLowerCase() || "buyer"
+        const dashboardRole = verifiedUser.role.toLowerCase()
         router.push(`/dashboard/${dashboardRole}`)
       }, 1500)
     } catch (err: any) {

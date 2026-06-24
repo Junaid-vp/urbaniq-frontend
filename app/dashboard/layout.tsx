@@ -20,16 +20,12 @@ export default function DashboardLayout({
   }, [])
 
   useEffect(() => {
-    if (isClient) {
-      if (!isAuthenticated) {
-        router.push("/login")
-      } else if (user && !user.isVerified) {
-        router.push(`/verify-email?email=${encodeURIComponent(user.email)}`)
-      }
+    if (isClient && !isAuthenticated) {
+      router.push("/login")
     }
-  }, [isClient, isAuthenticated, user, router])
+  }, [isClient, isAuthenticated, router])
 
-  if (!isClient || !isAuthenticated || (user && !user.isVerified)) {
+  if (!isClient || !isAuthenticated) {
     return null // or a loading spinner
   }
 

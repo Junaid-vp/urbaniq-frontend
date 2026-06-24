@@ -27,9 +27,7 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const response = await api.post("/auth/register", { firstName, lastName, email, password, role })
-      const { token, refreshToken, ...user } = response.data
-      setAuth(user, token, refreshToken)
+      await api.post("/auth/register", { firstName, lastName, email, password, role })
       router.push(`/verify-email?email=${encodeURIComponent(email)}`)
     } catch (err: any) {
       setError(err.response?.data?.message || err.response?.data?.error || "Registration failed")

@@ -26,9 +26,7 @@ export default function LoginPage() {
       const { token, refreshToken, ...user } = response.data
       setAuth(user, token, refreshToken)
       
-      if (!user.isVerified) {
-        router.push(`/verify-email?email=${encodeURIComponent(email)}`)
-      } else if (user.role === 'Buyer') {
+      if (user.role === 'Buyer') {
         router.push('/')
       } else {
         router.push(`/dashboard/${user.role.toLowerCase()}`)
