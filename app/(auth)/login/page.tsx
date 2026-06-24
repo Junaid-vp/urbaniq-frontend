@@ -23,10 +23,12 @@ export default function LoginPage() {
 
     try {
       const response = await api.post("/auth/login", { email, password })
-      const { token, ...user } = response.data
-      setAuth(user, token)
+      const { token, refreshToken, ...user } = response.data
+      setAuth(user, token, refreshToken)
       
-      if (user.role === 'Buyer') {
+      if (!user.isVerified) {
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`)
+      } else if (user.role === 'Buyer') {
         router.push('/')
       } else {
         router.push(`/dashboard/${user.role.toLowerCase()}`)
