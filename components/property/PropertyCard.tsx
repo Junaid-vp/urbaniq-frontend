@@ -43,14 +43,18 @@ export function PropertyCard({ property }: PropertyCardProps) {
           <span className="line-clamp-1">{property.location.city}, {property.location.state}</span>
         </div>
         <div className="flex justify-between items-center text-xs text-muted-foreground pt-4 border-t border-border">
-          <div className="flex items-center gap-1">
-            <Bed className="w-4 h-4 text-primary/70" />
-            <span>{property.features.bedrooms} Bed</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Bath className="w-4 h-4 text-primary/70" />
-            <span>{property.features.bathrooms} Bath</span>
-          </div>
+          {(property.features.bedrooms ?? 0) > 0 && (
+            <div className="flex items-center gap-1">
+              <Bed className="w-4 h-4 text-primary/70" />
+              <span>{property.features.bedrooms} Bed</span>
+            </div>
+          )}
+          {(property.features.bathrooms ?? 0) > 0 && (
+            <div className="flex items-center gap-1">
+              <Bath className="w-4 h-4 text-primary/70" />
+              <span>{property.features.bathrooms} Bath</span>
+            </div>
+          )}
           <div className="flex items-center gap-1">
             <Square className="w-4 h-4 text-primary/70" />
             <span>{property.features.area} sqft</span>

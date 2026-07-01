@@ -12,9 +12,12 @@ export interface IProperty {
   price: number;
   images?: string[];
   features: {
-    bedrooms: number;
-    bathrooms: number;
     area: number;
+    bedrooms?: number;
+    bathrooms?: number;
+    furnishing?: 'Furnished' | 'Semi-Furnished' | 'Unfurnished';
+    suitableFor?: string[];
+    zoning?: 'Residential' | 'Commercial' | 'Agricultural' | 'Industrial';
   };
   description: string;
   amenities?: string[];
