@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Building2 } from "lucide-react"
+import { Logo } from "@/components/ui/Logo"
+import { GuestGuard } from "@/components/layout/GuestGuard"
 
 export default function AuthLayout({
   children,
@@ -8,6 +9,7 @@ export default function AuthLayout({
 }) {
   return (
     <div className="flex min-h-screen bg-background">
+      <GuestGuard>
       <div className="flex w-full flex-col lg:flex-row">
         {/* Left Side - Brand/Image */}
         <div className="relative hidden w-1/2 lg:flex flex-col bg-muted p-10 text-white">
@@ -19,9 +21,8 @@ export default function AuthLayout({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
           </div>
-          <div className="relative z-10 flex items-center gap-2">
-            <Building2 className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl tracking-tight">Urbaniq</span>
+          <div className="relative z-10">
+            <Logo height={44} variant="white" asLink={false} />
           </div>
           <div className="relative z-10 mt-auto">
             <Badge className="mb-4 bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-md">Institutional Grade Real Estate</Badge>
@@ -48,8 +49,7 @@ export default function AuthLayout({
         {/* Right Side - Form */}
         <div className="flex w-full flex-col lg:w-1/2 p-4 sm:p-8 md:p-12 lg:p-24 overflow-y-auto">
            <div className="flex lg:hidden items-center gap-2 mb-8">
-            <Building2 className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl tracking-tight">Urbaniq</span>
+            <Logo height={40} />
           </div>
           <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
             {children}
@@ -60,6 +60,7 @@ export default function AuthLayout({
           </div>
         </div>
       </div>
+    </GuestGuard>
     </div>
   )
 }
