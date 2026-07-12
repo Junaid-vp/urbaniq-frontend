@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'urbaniq-media-bucket.s3.ap-south-1.amazonaws.com',
+        pathname: '/**',
       },
     ],
   },
