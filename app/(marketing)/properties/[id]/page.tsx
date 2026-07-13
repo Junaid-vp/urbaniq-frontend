@@ -209,23 +209,25 @@ export default function PropertyDetailPage() {
                   />
                 </button>
               </div>
-              <div className="grid grid-cols-5 gap-2 h-24 md:h-32">
-                {[1,2,3,4,5].map((idx) => {
-                  const img = images[idx] || images[0]
-                  const isLast = idx === 5
-                  return (
-                    <div key={idx} className="relative rounded-md overflow-hidden bg-gray-100 cursor-pointer">
-                      <Image src={img} fill className="object-cover" alt={`View ${idx+1}`} unoptimized />
-                      {isLast && (
-                        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white">
-                          <span className="font-semibold text-sm">+12</span>
-                          <span className="text-[10px]">photos</span>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
+              {images.length > 1 && (
+                <div className="grid grid-cols-5 gap-2 h-24 md:h-32">
+                  {images.slice(1, 6).map((img, idx) => {
+                    const isLast = idx === 4 && images.length > 6
+                    const remainingCount = images.length - 5
+                    return (
+                      <div key={idx} className="relative rounded-md overflow-hidden bg-gray-100 cursor-pointer">
+                        <Image src={img} fill className="object-cover" alt={`View ${idx+2}`} unoptimized />
+                        {isLast && (
+                          <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white">
+                            <span className="font-semibold text-sm">+{remainingCount}</span>
+                            <span className="text-[10px]">photos</span>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             {/* HEADER */}
