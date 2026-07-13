@@ -181,12 +181,15 @@ export default function PropertyDetailsPage() {
           {/* Images Placeholder */}
           {property.images && property.images.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 rounded-xl overflow-hidden">
-              {property.images.slice(0, 2).map((img: string, idx: number) => (
-                <div key={idx} className="aspect-video bg-muted relative">
-                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                   <img src={img} alt={`Property image ${idx+1}`} className="w-full h-full object-cover" />
-                </div>
-              ))}
+              {property.images.slice(0, 2).map((img: any, idx: number) => {
+                const src = typeof img === 'string' ? img : img.original;
+                return (
+                  <div key={idx} className="aspect-video bg-muted relative">
+                     {/* eslint-disable-next-line @next/next/no-img-element */}
+                     <img src={src} alt={`Property image ${idx+1}`} className="w-full h-full object-cover" />
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="aspect-video bg-muted/50 rounded-xl flex items-center justify-center border-2 border-dashed">
