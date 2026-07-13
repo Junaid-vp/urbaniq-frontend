@@ -359,7 +359,7 @@ export default function PropertyDetailPage() {
                   {similarProperties.map((p: any, i: number) => (
                     <Link href={`/properties/${p._id}`} key={i} className="group cursor-pointer block">
                       <div className="relative aspect-[4/3] rounded-md overflow-hidden mb-3 bg-gray-100">
-                        <Image src={getPropertyThumbnail(p.images?.[0], images[0])} fill className="object-cover group-hover:scale-105 transition-transform duration-500" alt={p.title} unoptimized />
+                        <Image src={getPropertyThumbnail(p.images?.[0])} fill className="object-cover group-hover:scale-105 transition-transform duration-500" alt={p.title} unoptimized />
                         <div className="absolute top-2 right-2 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded shadow-sm text-gray-900">
                           ${p.price.toLocaleString()}
                         </div>
