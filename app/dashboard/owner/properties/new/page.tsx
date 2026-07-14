@@ -239,10 +239,9 @@ export default function NewPropertyWizard() {
              return "Please fill out all property features."
           }
         }
-        // TODO: Make images mandatory after deployment
-        // if (formData.imagesUploaded === 0) {
-        //    return "Please upload at least 1 property image."
-        // }
+        if (formData.imagesUploaded === 0) {
+           return "Please upload at least 1 property image."
+        }
         // TODO: Make documents mandatory after deployment
         // if (!formData.documentUploaded) {
         //    return "Verification document is required to proceed."
