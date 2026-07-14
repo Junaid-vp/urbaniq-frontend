@@ -44,20 +44,29 @@ export default function ChatBox({ inquiryId, propertyTitle, propertyImage, chatP
       withCredentials: true
     })
     
-    newSocket.on("connect", () => {
+    const onConnect = () => {
       if (user?._id) {
         newSocket.emit("register", user._id)
       }
-    })
+    }
+
+    if (newSocket.connected) {
+      onConnect()
+    } else {
+      newSocket.on("connect", onConnect)
+    }
 
     newSocket.on("new_message", (msg: Message) => {
-      // Only append if the message belongs to the current inquiry
-      // To be safe, we should really broadcast the inquiryId in the socket message,
-      // but assuming the user is looking at this chat:
-      setMessages((prev) => {
-        if (prev.find(p => p._id === msg._id)) return prev;
-        return [...prev, msg]
-      })
+      // Only append if the message belongs to the current inquiry or collaboration property chat
+      const matchesInquiry = inquiryId && (msg as any).inquiryId === inquiryId;
+      const matchesCollaboration = collaborationPropertyId && (msg as any).propertyId === collaborationPropertyId;
+      
+      if (matchesInquiry || matchesCollaboration) {
+        setMessages((prev) => {
+          if (prev.find(p => p._id === msg._id)) return prev;
+          return [...prev, msg]
+        })
+      }
     })
 
     setSocket(newSocket)
@@ -65,7 +74,7 @@ export default function ChatBox({ inquiryId, propertyTitle, propertyImage, chatP
     return () => {
       newSocket.disconnect()
     }
-  }, [user])
+  }, [user, inquiryId, collaborationPropertyId])
 
   useEffect(() => {
     const fetchMessages = async () => {
